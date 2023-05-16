@@ -11,10 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import re
 import time
-from mycroft.messagebus.message import Message
-from mycroft import FallbackSkill
+from core import FallbackSkill
 from threading import Lock
 
 
@@ -33,10 +31,9 @@ class QuestionsAnswersSkill(FallbackSkill):
     def initialize(self):
         self.add_event('question:query.response',
                        self.handle_query_response)
-        self.register_fallback(self.handle_question, 5)
+        self.register_fallback(self.handle_question, 87)
 
-
-    #@intent_handler(AdaptIntent().require('Question'))
+    # @intent_handler(AdaptIntent().require('Question'))
     def handle_question(self, message):
         """ Send the phrase to the CommonQuerySkills and prepare for handling
             the replies.
@@ -44,7 +41,6 @@ class QuestionsAnswersSkill(FallbackSkill):
         self.waiting = True
         self.answered = False
         utt = message.data.get('utterance')
-        self.enclosure.mouth_think()
 
         self.query_replies[utt] = []
         self.query_extensions[utt] = []
@@ -109,7 +105,7 @@ class QuestionsAnswersSkill(FallbackSkill):
             search_phrase = message.data['phrase']
             if search_phrase in self.query_extensions:
                 self.query_extensions[search_phrase] = []
-            self.enclosure.mouth_reset()
+            # self.enclosure.mouth_reset()
 
             # Look at any replies that arrived before the timeout
             # Find response(s) with the highest confidence
@@ -146,6 +142,7 @@ class QuestionsAnswersSkill(FallbackSkill):
                 del self.query_extensions[search_phrase]
 
         return self.answered
+
 
 def create_skill():
     return QuestionsAnswersSkill()
